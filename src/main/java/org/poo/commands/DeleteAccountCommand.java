@@ -44,6 +44,21 @@ public class DeleteAccountCommand extends AbstractCommand {
                 commandOutput.put("output", outputNode);
                 commandOutput.put("timestamp", timestamp);
                 output.add(commandOutput);
+            } else {
+                ObjectMapper mapper = new ObjectMapper();
+
+                ObjectNode commandOutput = mapper.createObjectNode();
+                commandOutput.put("command", "deleteAccount");
+
+                ObjectNode node = mapper.createObjectNode();
+                node.put("error",
+                        "Account couldn't be deleted - see org.poo.transactions for details");
+                node.put("timestamp", timestamp);
+
+                commandOutput.put("timestamp", timestamp);
+                commandOutput.put("output", node);
+
+                output.add(commandOutput);
             }
         }
     }

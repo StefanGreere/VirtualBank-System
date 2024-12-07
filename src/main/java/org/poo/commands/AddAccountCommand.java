@@ -32,7 +32,7 @@ public class AddAccountCommand extends AbstractCommand {
         User user = bank.getUsers().get(email);
         user.addAccount(accountType, currency, interestRate);
 
-        Transaction transaction = new AddAccountTransaction(timestamp, "New account created");
+        Transaction transaction = new AddAccountTransaction(timestamp);
         user.getTransactions().add(transaction);
     }
 }

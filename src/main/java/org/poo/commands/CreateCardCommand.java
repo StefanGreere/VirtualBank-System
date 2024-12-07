@@ -6,6 +6,8 @@ import org.poo.cards.Card;
 import org.poo.cards.CardFactory;
 import org.poo.cards.CardFactorySelector;
 import org.poo.fileio.CommandInput;
+import org.poo.transactions.CreateCardTransaction;
+import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 import org.poo.utils.Utils;
@@ -40,6 +42,9 @@ public class CreateCardCommand extends AbstractCommand {
         Account acc = user.findAccountByIban(account);
         if (acc != null) {
             acc.addCard(command, cardNumber);   // add the card in the list card
+
+            Transaction transaction = new CreateCardTransaction(timestamp, cardNumber, email, acc.getIban());
+            user.getTransactions().add(transaction);
         }
     }
 }

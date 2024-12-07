@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
+import org.poo.transactions.CardPaymentTransaction;
+import org.poo.transactions.InsufficientFundsTransaction;
+import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 
@@ -46,8 +49,13 @@ public class PayOnlineCommand extends AbstractCommand {
             // if there is enough money stored in account
             if (Double.compare(account.getBalance(), convertAmount) >= 0) {
                 account.setBalance(account.getBalance() - convertAmount);
+
+                Transaction transaction = new CardPaymentTransaction(timestamp, convertAmount, commerciant);
+                user.getTransactions().add(transaction);
             } else {
                 // error transaction
+                Transaction transaction = new InsufficientFundsTransaction(timestamp);
+                user.getTransactions().add(transaction);
             }
         } else {
             // error
