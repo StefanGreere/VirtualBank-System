@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
+import org.poo.transactions.SendMoneyTransaction;
+import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 
@@ -44,6 +46,14 @@ public class SendMoneyCommand extends AbstractCommand {
             if (Double.compare(accountFromPay.getBalance(), convertAmount) >= 0) {
                 accountFromPay.setBalance(accountFromPay.getBalance() - amount);
                 accountToPay.setBalance(accountToPay.getBalance() + convertAmount);
+
+                // create and add the transaction
+                StringBuilder builder = new StringBuilder();
+                builder.append(amount).append(" " + accountFromPay.getCurrency());
+                String result = builder.toString();
+                Transaction transaction = new SendMoneyTransaction(timestamp,
+                        description, receiver, account, result, "sent");
+                payer.getTransactions().add(transaction);
             } else {
                 // error transaction
             }

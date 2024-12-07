@@ -2,6 +2,8 @@ package org.poo.commands;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.fileio.CommandInput;
+import org.poo.transactions.AddAccountTransaction;
+import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 
@@ -29,5 +31,8 @@ public class AddAccountCommand extends AbstractCommand {
 
         User user = bank.getUsers().get(email);
         user.addAccount(accountType, currency, interestRate);
+
+        Transaction transaction = new AddAccountTransaction(timestamp, "New account created");
+        user.getTransactions().add(transaction);
     }
 }

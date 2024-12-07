@@ -1,10 +1,12 @@
 package org.poo.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.poo.accounts.Account;
 import org.poo.accounts.ClassicAccount;
 import org.poo.accounts.SavingsAccount;
+import org.poo.transactions.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ public class User {
     private String lastName;
     private String email;
     private List<Account> accounts = new ArrayList<>();
+    @JsonIgnore
+    private List<Transaction> transactions = new ArrayList<>();
 
     public User(String firstName, String lastName, String email) {
         this.firstName = firstName;

@@ -30,6 +30,8 @@ public class CommandFactory {
                 return new SendMoneyCommand(output, input); // aici nu stiu daca o sa trebuiasca out
             case "setAlias":
                 return new SetAliasCommand(input);
+            case "printTransactions":
+                return new PrintTransactionsCommand(output, input);
             default:
                 return null;
         }
