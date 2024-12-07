@@ -29,6 +29,7 @@ public class PayOnlineCommand extends AbstractCommand {
         this.email = input.getEmail();
     }
 
+    @Override
     public void execute() {
         BankSingleton bank = BankSingleton.getInstance();
 

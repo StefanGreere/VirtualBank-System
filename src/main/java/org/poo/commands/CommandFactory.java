@@ -26,6 +26,8 @@ public class CommandFactory {
                 return new SetMinBalanceCommand(input);
             case "payOnline":
                 return new PayOnlineCommand(output, input);
+            case "sendMoney":
+                return new SendMoneyCommand(output, input);
             default:
                 return null;
         }
