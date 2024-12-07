@@ -22,6 +22,8 @@ public abstract class Account {
     private List<Card> cards = new ArrayList<>();
     @JsonIgnore
     private double minBalance;
+    @JsonIgnore
+    private String alias;
 
     public Account(String currency, String type) {
         this.currency = currency;

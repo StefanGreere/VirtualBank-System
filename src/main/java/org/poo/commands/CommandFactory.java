@@ -27,7 +27,9 @@ public class CommandFactory {
             case "payOnline":
                 return new PayOnlineCommand(output, input);
             case "sendMoney":
-                return new SendMoneyCommand(output, input);
+                return new SendMoneyCommand(output, input); // aici nu stiu daca o sa trebuiasca out
+            case "setAlias":
+                return new SetAliasCommand(input);
             default:
                 return null;
         }
