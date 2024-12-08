@@ -22,14 +22,6 @@ public class AddFundsCommand extends AbstractCommand {
     public void execute() {
         BankSingleton bank = BankSingleton.getInstance();
 
-//        Asta e varianta aia fara erori!!
-//        Account acc = null;
-//        for (User user : bank.getUsers().values()) {
-//            acc = user.findAccountByIban(account);
-//            if (acc != null) {
-//                break;
-//            }
-//        }
         Account acc = bank.findAccountUserByIban(account);
 
         if (acc != null) {

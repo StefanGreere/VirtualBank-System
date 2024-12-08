@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.poo.accounts.Account;
 import org.poo.accounts.ClassicAccount;
 import org.poo.accounts.SavingsAccount;
+import org.poo.cards.Card;
 import org.poo.transactions.Transaction;
 
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ public class User {
         this.email = email;
     }
 
-    // metoda care sa adauge un cont
     public void addAccount(String type, String currency, double interestRate) {
         if (type.equals("classic")) {
             Account newAccount = new ClassicAccount(currency, type);
@@ -66,5 +66,17 @@ public class User {
                 break;
             }
         }
+    }
+
+    public Card findCard(String cardNumber) {
+        for (Account account : accounts) {
+            int index = account.findIndexCardByNumber(cardNumber);
+
+            if (index != -1) {
+                return account.getCards().get(index);
+            }
+        }
+
+        return null;
     }
 }

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
+import org.poo.cards.Card;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
 import org.poo.transactions.CardPaymentTransaction;
+import org.poo.transactions.FrozenCardTransaction;
 import org.poo.transactions.InsufficientFundsTransaction;
 import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
@@ -41,6 +43,16 @@ public class PayOnlineCommand extends AbstractCommand {
         Account account = user.findAccountByCardNumber(cardNumber);
 
         if (account != null) {
+            int index = account.findIndexCardByNumber(cardNumber);
+            Card card = account.getCards().get(index);
+
+            // if the card is frozen, the pay online can't work
+            if (card.getStatus().equals("frozen")) {
+                Transaction transaction = new FrozenCardTransaction(timestamp);
+                user.getTransactions().add(transaction);
+                return;
+            }
+
             ExchangeRateManager exchangeRates = ExchangeRateManager.getInstance();
             // get the corrent rate to convert
             double rate = exchangeRates.getRate(currency, account.getCurrency());
@@ -50,8 +62,13 @@ public class PayOnlineCommand extends AbstractCommand {
             if (Double.compare(account.getBalance(), convertAmount) >= 0) {
                 account.setBalance(account.getBalance() - convertAmount);
 
-                Transaction transaction = new CardPaymentTransaction(timestamp, convertAmount, commerciant);
-                user.getTransactions().add(transaction);
+                if (account.getBalance() < account.getMinBalance()) {
+                    card.setStatus("frozen");
+                } else {
+                    Transaction transaction = new CardPaymentTransaction(timestamp, convertAmount, commerciant);
+                    user.getTransactions().add(transaction);
+                }
+
             } else {
                 // error transaction
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);

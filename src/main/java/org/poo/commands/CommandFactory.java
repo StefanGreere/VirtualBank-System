@@ -32,6 +32,8 @@ public class CommandFactory {
                 return new SetAliasCommand(input);
             case "printTransactions":
                 return new PrintTransactionsCommand(output, input);
+            case "checkCardStatus":
+                return new CheckCardStatusCommand(output, input);
             default:
                 return null;
         }

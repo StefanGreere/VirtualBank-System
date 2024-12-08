@@ -3,6 +3,7 @@ package org.poo.users;
 import lombok.Getter;
 import lombok.Setter;
 import org.poo.accounts.Account;
+import org.poo.cards.Card;
 import org.poo.fileio.UserInput;
 
 import java.util.LinkedHashMap;
@@ -49,6 +50,42 @@ public class BankSingleton {
                 }
             }
         }
+        return null;
+    }
+
+    public Card findCardByCardNumber(String cardNumber) {
+        for (User user : users.values()) {
+            Card card = user.findCard(cardNumber);
+
+            if (card != null) {
+                return card;
+            }
+        }
+
+        return null;
+    }
+
+    public Account findAccountByCardNumber(String cardNumber) {
+        for (User user : users.values()) {
+            Account account = user.findAccountByCardNumber(cardNumber);
+
+            if (account != null) {
+                return account;
+            }
+        }
+
+        return null;
+    }
+
+    public User findUserByIban(String iban) {
+        for (User user : users.values()) {
+            Account account = user.findAccountByIban(iban);
+
+            if (account != null) {
+                return user;
+            }
+        }
+
         return null;
     }
 }

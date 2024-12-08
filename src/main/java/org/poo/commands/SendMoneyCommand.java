@@ -43,7 +43,7 @@ public class SendMoneyCommand extends AbstractCommand {
 
             double convertAmount = rate * amount;
             // if there is enough money stored in account
-            if (Double.compare(accountFromPay.getBalance(), convertAmount) >= 0) {
+            if (Double.compare(accountFromPay.getBalance(), amount) >= 0) {
                 accountFromPay.setBalance(accountFromPay.getBalance() - amount);
                 accountToPay.setBalance(accountToPay.getBalance() + convertAmount);
 
