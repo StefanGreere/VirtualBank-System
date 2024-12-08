@@ -34,6 +34,10 @@ public class CommandFactory {
                 return new PrintTransactionsCommand(output, input);
             case "checkCardStatus":
                 return new CheckCardStatusCommand(output, input);
+            case "changeInterestRate":
+                return new ChangeInterestRateCommand(output, input); // si aici
+            case "splitPayment":
+                return new SplitPaymentCommand(output, input);
             default:
                 return null;
         }

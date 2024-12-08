@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
+import org.poo.transactions.InsufficientFundsTransaction;
 import org.poo.transactions.SendMoneyTransaction;
 import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
@@ -55,7 +56,8 @@ public class SendMoneyCommand extends AbstractCommand {
                         description, receiver, account, result, "sent");
                 payer.getTransactions().add(transaction);
             } else {
-                // error transaction
+                Transaction transaction = new InsufficientFundsTransaction(timestamp);
+                payer.getTransactions().add(transaction);
             }
         } else {
             // error
