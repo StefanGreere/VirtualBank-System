@@ -38,6 +38,8 @@ public class CommandFactory {
                 return new ChangeInterestRateCommand(output, input); // si aici
             case "splitPayment":
                 return new SplitPaymentCommand(output, input);
+            case "report":
+                return new ReportCommand(output, input);
             default:
                 return null;
         }
