@@ -1,6 +1,8 @@
 package org.poo.commands;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
 import org.poo.accounts.SavingsAccount;
 import org.poo.fileio.CommandInput;
@@ -13,12 +15,14 @@ public class ChangeInterestRateCommand extends AbstractCommand {
     private int timestamp;
     private String account;
     private double interestRate;
+    private String command;
 
     public ChangeInterestRateCommand(ArrayNode output, CommandInput input) {
         super(output);
         this.timestamp = input.getTimestamp();
         this.account = input.getAccount();
         this.interestRate = input.getInterestRate();
+        this.command = input.getCommand();
     }
 
     @Override
@@ -39,6 +43,16 @@ public class ChangeInterestRateCommand extends AbstractCommand {
 
                 acc.getTransactions().add(transaction);
             }
+        } else {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode commandOutput = mapper.createObjectNode();
+            commandOutput.put("command", command);
+            ObjectNode node = mapper.createObjectNode();
+            node.put("description", "This is not a savings account");
+            node.put("timestamp", timestamp);
+            commandOutput.put("output", node);
+            commandOutput.put("timestamp", timestamp);
+            output.add(commandOutput);
         }
     }
 }

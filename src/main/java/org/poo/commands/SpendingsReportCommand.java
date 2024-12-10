@@ -31,15 +31,21 @@ public class SpendingsReportCommand extends AbstractCommand {
     public void execute() {
         BankSingleton bank = BankSingleton.getInstance();
 
-        User user = bank.findUserByIban(account);
-        if (user == null) {
-            return;
-        }
-        Account acc = bank.findAccountUserByIban(account);
-
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode commandOutput = mapper.createObjectNode();
         commandOutput.put("command", "spendingsReport");
+
+        User user = bank.findUserByIban(account);
+        if (user == null) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("description", "Account not found");
+            node.put("timestamp", timestamp);
+            commandOutput.put("output", node);
+            commandOutput.put("timestamp", timestamp);
+            output.add(commandOutput);
+            return;
+        }
+        Account acc = bank.findAccountUserByIban(account);
 
         ObjectNode node = mapper.createObjectNode();
         node.put("IBAN", account);
@@ -59,7 +65,7 @@ public class SpendingsReportCommand extends AbstractCommand {
 
         node.put("transactions", transactions);
 
-        // sort descending by total field
+        // sort alphabetically by commerciant name
         Collections.sort(acc.getCommerciants());
 
         ArrayNode spendings = mapper.createArrayNode();

@@ -27,15 +27,21 @@ public class ReportCommand extends AbstractCommand {
     public void execute() {
         BankSingleton bank = BankSingleton.getInstance();
 
-        User user = bank.findUserByIban(account);
-        if (user == null) {
-            return;
-        }
-        Account acc = user.findAccountByIban(account);
-
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode commandOutput = mapper.createObjectNode();
         commandOutput.put("command", "report");
+
+        User user = bank.findUserByIban(account);
+        if (user == null) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("description", "Account not found");
+            node.put("timestamp", timestamp);
+            commandOutput.put("output", node);
+            commandOutput.put("timestamp", timestamp);
+            output.add(commandOutput);
+            return;
+        }
+        Account acc = user.findAccountByIban(account);
 
         ObjectNode node = mapper.createObjectNode();
         node.put("IBAN", account);

@@ -19,6 +19,6 @@ public class Commerciant implements Comparable<Commerciant> {
 
     @Override
     public int compareTo(Commerciant other) {
-        return Double.compare(other.total, this.total);
+        return this.commerciant.compareTo(other.commerciant);
     }
 }

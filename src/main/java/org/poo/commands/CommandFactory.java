@@ -36,6 +36,8 @@ public class CommandFactory {
                 return new CheckCardStatusCommand(output, input);
             case "changeInterestRate":
                 return new ChangeInterestRateCommand(output, input); // si aici
+            case "addInterest":
+                return new ChangeInterestRateCommand(output, input); // si aici
             case "splitPayment":
                 return new SplitPaymentCommand(output, input);
             case "report":
