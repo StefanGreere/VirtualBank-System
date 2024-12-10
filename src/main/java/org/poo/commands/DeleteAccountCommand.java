@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
+import org.poo.transactions.ExistFundsTransaction;
+import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 
@@ -59,6 +61,11 @@ public class DeleteAccountCommand extends AbstractCommand {
                 commandOutput.put("output", node);
 
                 output.add(commandOutput);
+
+                Transaction transaction = new ExistFundsTransaction(timestamp);
+                accountOwner.getTransactions().add(transaction);
+
+                acc.getTransactions().add(transaction);
             }
         }
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
+import org.poo.transactions.SplitPaymentsErrorTransaction;
 import org.poo.transactions.SplitPaymentsTransaction;
 import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
@@ -33,6 +34,38 @@ public class SplitPaymentCommand extends AbstractCommand {
 
         int number = accounts.size();
         double amountDivided = amount / number;
+
+        boolean haveMoney = true;
+        String accountFail = null;
+        for (String account : accounts) {
+            Account acc = bank.findAccountUserByIban(account);
+
+            // get the corrent rate to convert
+            double rate = exchangeRates.getRate(currency, acc.getCurrency());
+            double convertAmount = rate * amountDivided;
+
+            if (Double.compare(acc.getBalance(), convertAmount) < 0) {
+                accountFail = account;
+                haveMoney = false;
+            }
+        }
+
+        if (haveMoney == false) {
+            // locale used for double number . instead of ,
+            String result = String.format(Locale.US, "Split payment of %.2f %s", amount, currency);
+            Transaction transaction = new SplitPaymentsErrorTransaction(timestamp, result,
+                    amountDivided, currency, accounts, accountFail);
+
+            for (String account : accounts) {
+                Account acc = bank.findAccountUserByIban(account);
+
+                User user = bank.findUserByIban(account);
+                user.getTransactions().add(transaction);
+
+                acc.getTransactions().add(transaction);
+            }
+            return;
+        }
 
         for (String account : accounts) {
             Account acc = bank.findAccountUserByIban(account);

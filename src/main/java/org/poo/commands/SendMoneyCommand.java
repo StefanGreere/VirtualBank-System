@@ -56,7 +56,16 @@ public class SendMoneyCommand extends AbstractCommand {
                         description, receiver, account, result, "sent");
                 payer.getTransactions().add(transaction);
 
-                accountFromPay.getTransactions().add(transaction);
+                // create and add the transaction
+                StringBuilder helper = new StringBuilder();
+                helper.append(convertAmount).append(" " + accountToPay.getCurrency());
+                String newResult = helper.toString();
+                User reveiverUser = bank.findUserByIban(receiver);
+                Transaction receive = new SendMoneyTransaction(timestamp,
+                        description, receiver, account, newResult, "received");
+                reveiverUser.getTransactions().add(receive);
+
+                accountToPay.getTransactions().add(receive);
             } else {
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);
                 payer.getTransactions().add(transaction);
