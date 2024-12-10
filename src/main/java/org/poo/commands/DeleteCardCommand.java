@@ -36,6 +36,7 @@ public class DeleteCardCommand extends AbstractCommand {
                 accountOwner.getTransactions().add(transaction);
 
                 account.getTransactions().add(transaction);
+                return;
             }
         }
     }

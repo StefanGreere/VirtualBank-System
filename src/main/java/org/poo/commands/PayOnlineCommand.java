@@ -61,9 +61,6 @@ public class PayOnlineCommand extends AbstractCommand {
             // if there is enough money stored in account
             if (Double.compare(account.getBalance(), convertAmount) >= 0) {
                 account.setBalance(account.getBalance() - convertAmount);
-                if (card.getCardType().equals("oneTimePay")) {
-                    card.setCardNumber(Utils.generateCardNumber());
-                }
 
                 if (account.getBalance() < account.getMinBalance()) {
                     card.setStatus("frozen");
@@ -73,15 +70,23 @@ public class PayOnlineCommand extends AbstractCommand {
 
                     account.getTransactions().add(transaction);
 
-//                    Commerciant newCommerciant = account.findCommerciantByName(commerciant);
-//                    if (newCommerciant != null) {
-//                        newCommerciant.setTotal(newCommerciant.getTotal() + convertAmount);
-//                    } else {
                     Commerciant newCommerciant = new Commerciant(commerciant, convertAmount, timestamp);
                     account.getCommerciants().add(newCommerciant);
-//                    }
                 }
 
+                if (card.getCardType().equals("oneTimePay")) {
+                    Transaction transaction = new DestroyCardTransaction(timestamp,
+                            account.getIban(), cardNumber, email);
+                    user.getTransactions().add(transaction);
+                    account.getTransactions().add(transaction);
+
+                    card.setCardNumber(Utils.generateCardNumber());
+
+                    Transaction newCard = new CreateCardTransaction(timestamp,
+                            card.getCardNumber(), email, account.getIban());
+                    user.getTransactions().add(newCard);
+                    account.getTransactions().add(newCard);
+                }
             } else {
                 // error transaction
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);

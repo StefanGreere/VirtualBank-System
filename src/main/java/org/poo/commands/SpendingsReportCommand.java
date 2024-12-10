@@ -46,6 +46,14 @@ public class SpendingsReportCommand extends AbstractCommand {
             return;
         }
         Account acc = bank.findAccountUserByIban(account);
+        if (acc.getType().equals("savings")) {
+            ObjectNode node = mapper.createObjectNode();
+            node.put("error", "This kind of report is not supported for a saving account");
+            commandOutput.put("output", node);
+            commandOutput.put("timestamp", timestamp);
+            output.add(commandOutput);
+            return;
+        }
 
         ObjectNode node = mapper.createObjectNode();
         node.put("IBAN", account);

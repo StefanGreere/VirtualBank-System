@@ -56,6 +56,8 @@ public class SendMoneyCommand extends AbstractCommand {
                         description, receiver, account, result, "sent");
                 payer.getTransactions().add(transaction);
 
+                accountFromPay.getTransactions().add(transaction);
+
                 // create and add the transaction
                 StringBuilder helper = new StringBuilder();
                 helper.append(convertAmount).append(" " + accountToPay.getCurrency());
