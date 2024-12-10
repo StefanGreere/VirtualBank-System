@@ -34,6 +34,8 @@ public class DeleteCardCommand extends AbstractCommand {
 
                 Transaction transaction = new DeleteCardTransaction(timestamp, account.getIban(), cardNumber, email);
                 accountOwner.getTransactions().add(transaction);
+
+                account.getTransactions().add(transaction);
             }
         }
     }

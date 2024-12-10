@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.poo.cards.Card;
 import org.poo.cards.CardFactory;
 import org.poo.cards.CardFactorySelector;
+import org.poo.transactions.Commerciant;
+import org.poo.transactions.Transaction;
 import org.poo.utils.Utils;
 
 import java.util.ArrayList;
@@ -24,6 +26,10 @@ public abstract class Account {
     private double minBalance;
     @JsonIgnore
     private String alias;
+    @JsonIgnore
+    private List<Transaction> transactions = new ArrayList<>();
+    @JsonIgnore
+    private List<Commerciant> commerciants = new ArrayList<>();
 
     public Account(String currency, String type) {
         this.currency = currency;
@@ -56,5 +62,15 @@ public abstract class Account {
         }
 
         return -1;
+    }
+
+    public Commerciant findCommerciantByName(String name) {
+        for (Commerciant commerciant : commerciants) {
+            if (commerciant.getCommerciant().equals(name)) {
+                return commerciant;
+            }
+        }
+
+        return null;
     }
 }

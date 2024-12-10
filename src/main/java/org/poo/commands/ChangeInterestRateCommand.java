@@ -36,6 +36,8 @@ public class ChangeInterestRateCommand extends AbstractCommand {
             if (user != null) {
                 Transaction transaction = new InterestRateTransaction(timestamp);
                 user.getTransactions().add(transaction);
+
+                acc.getTransactions().add(transaction);
             }
         }
     }

@@ -5,17 +5,21 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
+import org.poo.transactions.Commerciant;
 import org.poo.transactions.Transaction;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
 
-public class ReportCommand extends AbstractCommand {
+import java.util.Collections;
+import java.util.Comparator;
+
+public class SpendingsReportCommand extends AbstractCommand {
     private int startTimestamp;
     private int endTimestamp;
     private String account;
     private int timestamp;
 
-    public ReportCommand(ArrayNode output, CommandInput input) {
+    public SpendingsReportCommand(ArrayNode output, CommandInput input) {
         super(output);
         this.startTimestamp = input.getStartTimestamp();
         this.endTimestamp = input.getEndTimestamp();
@@ -31,11 +35,11 @@ public class ReportCommand extends AbstractCommand {
         if (user == null) {
             return;
         }
-        Account acc = user.findAccountByIban(account);
+        Account acc = bank.findAccountUserByIban(account);
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode commandOutput = mapper.createObjectNode();
-        commandOutput.put("command", "report");
+        commandOutput.put("command", "spendingsReport");
 
         ObjectNode node = mapper.createObjectNode();
         node.put("IBAN", account);
@@ -46,13 +50,29 @@ public class ReportCommand extends AbstractCommand {
 
         for (Transaction transaction : acc.getTransactions()) {
             if (transaction.getTimestamp() >= startTimestamp && transaction.getTimestamp() <= endTimestamp) {
-                ObjectNode report = mapper.valueToTree(transaction);
-                transactions.add(report);
+                if (transaction.getDescription().equals("Card payment")) {
+                    ObjectNode report = mapper.valueToTree(transaction);
+                    transactions.add(report);
+                }
             }
         }
 
         node.put("transactions", transactions);
+
+        // sort descending by total field
+        Collections.sort(acc.getCommerciants());
+
+        ArrayNode spendings = mapper.createArrayNode();
+        for (Commerciant commerciant : acc.getCommerciants()) {
+            if (commerciant.getTimestamp() >= startTimestamp && commerciant.getTimestamp() <= endTimestamp) {
+                ObjectNode report = mapper.valueToTree(commerciant);
+                spendings.add(report);
+            }
+        }
+
+        node.put("commerciants", spendings);
         commandOutput.put("output", node);
+
         commandOutput.put("timestamp", timestamp);
         output.add(commandOutput);
     }

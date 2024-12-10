@@ -45,6 +45,8 @@ public class CreateCardCommand extends AbstractCommand {
 
             Transaction transaction = new CreateCardTransaction(timestamp, cardNumber, email, acc.getIban());
             user.getTransactions().add(transaction);
+
+            acc.getTransactions().add(transaction);
         }
     }
 }

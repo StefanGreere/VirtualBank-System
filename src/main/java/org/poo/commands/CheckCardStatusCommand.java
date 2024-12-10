@@ -35,6 +35,8 @@ public class CheckCardStatusCommand extends AbstractCommand {
                 card.setStatus("frozen");
                 Transaction transaction = new WarningTransaction(timestamp);
                 user.getTransactions().add(transaction);
+
+                account.getTransactions().add(transaction);
             }
         } else {
             ObjectMapper mapper = new ObjectMapper();

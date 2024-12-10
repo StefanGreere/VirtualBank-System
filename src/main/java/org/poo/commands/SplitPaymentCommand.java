@@ -50,6 +50,8 @@ public class SplitPaymentCommand extends AbstractCommand {
 
                 User user = bank.findUserByIban(account);
                 user.getTransactions().add(transaction);
+
+                acc.getTransactions().add(transaction);
             }
         }
     }

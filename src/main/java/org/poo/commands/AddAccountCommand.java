@@ -34,5 +34,7 @@ public class AddAccountCommand extends AbstractCommand {
 
         Transaction transaction = new AddAccountTransaction(timestamp);
         user.getTransactions().add(transaction);
+
+        user.getAccounts().getLast().getTransactions().add(transaction);
     }
 }

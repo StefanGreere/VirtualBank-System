@@ -55,9 +55,13 @@ public class SendMoneyCommand extends AbstractCommand {
                 Transaction transaction = new SendMoneyTransaction(timestamp,
                         description, receiver, account, result, "sent");
                 payer.getTransactions().add(transaction);
+
+                accountFromPay.getTransactions().add(transaction);
             } else {
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);
                 payer.getTransactions().add(transaction);
+
+                accountFromPay.getTransactions().add(transaction);
             }
         } else {
             // error

@@ -40,6 +40,8 @@ public class CommandFactory {
                 return new SplitPaymentCommand(output, input);
             case "report":
                 return new ReportCommand(output, input);
+            case "spendingsReport":
+                return new SpendingsReportCommand(output, input);
             default:
                 return null;
         }

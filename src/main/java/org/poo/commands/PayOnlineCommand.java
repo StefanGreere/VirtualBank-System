@@ -7,12 +7,10 @@ import org.poo.accounts.Account;
 import org.poo.cards.Card;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
-import org.poo.transactions.CardPaymentTransaction;
-import org.poo.transactions.FrozenCardTransaction;
-import org.poo.transactions.InsufficientFundsTransaction;
-import org.poo.transactions.Transaction;
+import org.poo.transactions.*;
 import org.poo.users.BankSingleton;
 import org.poo.users.User;
+import org.poo.utils.Utils;
 
 public class PayOnlineCommand extends AbstractCommand {
     private String cardNumber;
@@ -50,6 +48,8 @@ public class PayOnlineCommand extends AbstractCommand {
             if (card.getStatus().equals("frozen")) {
                 Transaction transaction = new FrozenCardTransaction(timestamp);
                 user.getTransactions().add(transaction);
+
+                account.getTransactions().add(transaction);
                 return;
             }
 
@@ -61,18 +61,33 @@ public class PayOnlineCommand extends AbstractCommand {
             // if there is enough money stored in account
             if (Double.compare(account.getBalance(), convertAmount) >= 0) {
                 account.setBalance(account.getBalance() - convertAmount);
+                if (card.getCardType().equals("oneTimePay")) {
+                    card.setCardNumber(Utils.generateCardNumber());
+                }
 
                 if (account.getBalance() < account.getMinBalance()) {
                     card.setStatus("frozen");
                 } else {
                     Transaction transaction = new CardPaymentTransaction(timestamp, convertAmount, commerciant);
                     user.getTransactions().add(transaction);
+
+                    account.getTransactions().add(transaction);
+
+//                    Commerciant newCommerciant = account.findCommerciantByName(commerciant);
+//                    if (newCommerciant != null) {
+//                        newCommerciant.setTotal(newCommerciant.getTotal() + convertAmount);
+//                    } else {
+                    Commerciant newCommerciant = new Commerciant(commerciant, convertAmount, timestamp);
+                    account.getCommerciants().add(newCommerciant);
+//                    }
                 }
 
             } else {
                 // error transaction
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);
                 user.getTransactions().add(transaction);
+
+                account.getTransactions().add(transaction);
             }
         } else {
             // error
