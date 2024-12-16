@@ -8,7 +8,8 @@ public class CardPaymentTransaction extends Transaction {
     private double amount;
     private String commerciant;
 
-    public CardPaymentTransaction(int timestamp, double amount, String commerciant) {
+    public CardPaymentTransaction(final int timestamp,
+                                  final double amount, final String commerciant) {
         super(timestamp, "Card payment");
         this.amount = amount;
         this.commerciant = commerciant;

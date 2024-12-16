@@ -1,6 +1,5 @@
 package org.poo.commands;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.fileio.CommandInput;
 import org.poo.transactions.AddAccountTransaction;
 import org.poo.transactions.Transaction;
@@ -14,7 +13,7 @@ public class AddAccountCommand extends AbstractCommand {
     private int timestamp;
     private double interestRate;
 
-    public AddAccountCommand(CommandInput input) {
+    public AddAccountCommand(final CommandInput input) {
         super();
         this.email = input.getEmail();
         this.currency = input.getCurrency();
@@ -25,8 +24,15 @@ public class AddAccountCommand extends AbstractCommand {
         }
     }
 
+    /**
+     * Executes the operation to add a new account for the user and creates the transaction:
+     * find the user by email, adds a new account with the specified details,
+     * creates an AddAccountTransaction, and logs it to the user's transaction list and
+     * the last account's transaction list
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         User user = bank.getUsers().get(email);

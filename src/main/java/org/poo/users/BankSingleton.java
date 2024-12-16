@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Getter @Setter
-public class BankSingleton {
+public final class BankSingleton {
     private static BankSingleton instance;
     private Map<String, User> users;    // the key is the email
 
@@ -29,18 +29,15 @@ public class BankSingleton {
         instance = null;
     }
 
-    public boolean hasUser(String email) {
-        return users.containsKey(email);
-    }
-
-    public void addAllUsers(UserInput[] usersInput) {
+    public void addAllUsers(final UserInput[] usersInput) {
         for (UserInput userInput : usersInput) {
-            User newUser = new User(userInput.getFirstName(), userInput.getLastName(), userInput.getEmail());
+            User newUser = new User(userInput.getFirstName(),
+                            userInput.getLastName(), userInput.getEmail());
             this.users.put(userInput.getEmail(), newUser);
         }
     }
 
-    public Account findAccountUserByIban(String iban) {
+    public Account findAccountUserByIban(final String iban) {
         for (User user : users.values()) {
             Account account = user.findAccountByIban(iban);
 
@@ -53,7 +50,7 @@ public class BankSingleton {
         return null;
     }
 
-    public Card findCardByCardNumber(String cardNumber) {
+    public Card findCardByCardNumber(final String cardNumber) {
         for (User user : users.values()) {
             Card card = user.findCard(cardNumber);
 
@@ -65,7 +62,7 @@ public class BankSingleton {
         return null;
     }
 
-    public Account findAccountByCardNumber(String cardNumber) {
+    public Account findAccountByCardNumber(final String cardNumber) {
         for (User user : users.values()) {
             Account account = user.findAccountByCardNumber(cardNumber);
 
@@ -77,7 +74,7 @@ public class BankSingleton {
         return null;
     }
 
-    public User findUserByIban(String iban) {
+    public User findUserByIban(final String iban) {
         for (User user : users.values()) {
             Account account = user.findAccountByIban(iban);
 

@@ -11,14 +11,19 @@ public class Commerciant implements Comparable<Commerciant> {
     @JsonIgnore
     private int timestamp;
 
-    public Commerciant(String commerciant, double total, int timestamp) {
+    public Commerciant(final String commerciant, final double total, final int timestamp) {
         this.commerciant = commerciant;
         this.total = total;
         this.timestamp = timestamp;
     }
 
+    /**
+     * Compares this commerciant with another based on their names
+     *
+     * @param other the other commerciant
+     */
     @Override
-    public int compareTo(Commerciant other) {
+    public int compareTo(final Commerciant other) {
         return this.commerciant.compareTo(other.commerciant);
     }
 }

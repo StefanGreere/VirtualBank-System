@@ -1,7 +1,5 @@
 package org.poo.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.transactions.DeleteCardTransaction;
@@ -14,28 +12,39 @@ public class DeleteCardCommand extends AbstractCommand {
     private String email;
     private int timestamp;
 
-    public DeleteCardCommand(CommandInput input) {
+    public DeleteCardCommand(final CommandInput input) {
         super();
         this.cardNumber = input.getCardNumber();
         this.email = input.getEmail();
         this.timestamp = input.getTimestamp();
     }
 
+    /**
+     * Executes the command to delete a card from the user's accounts
+     * Searches through all accounts of the user to find the card by its number
+     * If found the card is removed and a transaction will be created
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         User accountOwner = bank.getUsers().get(email);
 
         for (Account account : accountOwner.getAccounts()) {
             int index = account.findIndexCardByNumber(cardNumber);
+            // if card exists
             if (index >= 0) {
                 account.getCards().remove(index);
 
-                Transaction transaction = new DeleteCardTransaction(timestamp, account.getIban(), cardNumber, email);
+                // add the transaction
+                Transaction transaction = new DeleteCardTransaction(timestamp,
+                                        account.getIban(), cardNumber, email);
                 accountOwner.getTransactions().add(transaction);
 
                 account.getTransactions().add(transaction);
+
+                // finish the command
                 return;
             }
         }

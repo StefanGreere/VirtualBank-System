@@ -12,14 +12,18 @@ public class PrintTransactionsCommand extends AbstractCommand {
     private String email;
     private int timestamp;
 
-    public PrintTransactionsCommand(ArrayNode output, CommandInput input) {
+    public PrintTransactionsCommand(final ArrayNode output, final CommandInput input) {
         super(output);
         this.email = input.getEmail();
         this.timestamp = input.getTimestamp();
     }
 
+    /**
+     * Executes the command to print all transactions of a specific user
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         User user = bank.getUsers().get(email);

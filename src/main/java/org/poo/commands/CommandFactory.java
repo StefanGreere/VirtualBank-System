@@ -3,8 +3,15 @@ package org.poo.commands;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.fileio.CommandInput;
 
-public class CommandFactory {
-    public static Command createCommand (ArrayNode output, CommandInput input) {
+public final class CommandFactory {
+    /**
+     * Creates a specific Command object based on the command type specified in the input
+     *
+     * @param output the ArrayNode to which the command output will be added
+     * @param input the CommandInput containing the command type and associated parameters
+     * @return a new instance of the appropriate Command implementation or null
+     */
+    public static Command createCommand(final ArrayNode output, final CommandInput input) {
         String command = input.getCommand();
 
         switch (command) {
@@ -27,7 +34,7 @@ public class CommandFactory {
             case "payOnline":
                 return new PayOnlineCommand(output, input);
             case "sendMoney":
-                return new SendMoneyCommand(output, input); // aici nu stiu daca o sa trebuiasca out
+                return new SendMoneyCommand(input);
             case "setAlias":
                 return new SetAliasCommand(input);
             case "printTransactions":
@@ -35,9 +42,9 @@ public class CommandFactory {
             case "checkCardStatus":
                 return new CheckCardStatusCommand(output, input);
             case "changeInterestRate":
-                return new ChangeInterestRateCommand(output, input); // si aici
+                return new ChangeInterestRateCommand(output, input);
             case "addInterest":
-                return new ChangeInterestRateCommand(output, input); // si aici
+                return new ChangeInterestRateCommand(output, input);
             case "splitPayment":
                 return new SplitPaymentCommand(output, input);
             case "report":
@@ -47,5 +54,8 @@ public class CommandFactory {
             default:
                 return null;
         }
+    }
+
+    private CommandFactory() {
     }
 }

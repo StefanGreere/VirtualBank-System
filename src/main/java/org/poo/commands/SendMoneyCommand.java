@@ -1,6 +1,5 @@
 package org.poo.commands;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.poo.accounts.Account;
 import org.poo.fileio.CommandInput;
 import org.poo.rates.ExchangeRateManager;
@@ -18,8 +17,8 @@ public class SendMoneyCommand extends AbstractCommand {
     private String email;
     private String description;
 
-    public SendMoneyCommand(ArrayNode output, CommandInput input) {
-        super(output);
+    public SendMoneyCommand(final CommandInput input) {
+        super();
         this.account = input.getAccount();
         this.receiver = input.getReceiver();
         this.amount = input.getAmount();
@@ -28,8 +27,17 @@ public class SendMoneyCommand extends AbstractCommand {
         this.description = input.getDescription();
     }
 
+    /**
+     * Executes the command to transfer funds from one account to another
+     * The transfer includes converting the amount based on exchange rates
+     * If the payer's account has sufficient balance the transfer will be ok,
+     * and the transactions will be added
+     * If the payer's account does not have sufficient funds an insufficient funds
+     * a transaction will be added
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         User payer = bank.getUsers().get(email);
@@ -37,14 +45,18 @@ public class SendMoneyCommand extends AbstractCommand {
         Account accountToPay = bank.findAccountUserByIban(receiver);
 
         if (accountFromPay != null && accountToPay != null) {
+            // get the exchange rates instance
             ExchangeRateManager exchangeRates = ExchangeRateManager.getInstance();
 
-            // get the corrent rate to convert
-            double rate = exchangeRates.getRate(accountFromPay.getCurrency(), accountToPay.getCurrency());
+            // get the correct rate to convert
+            double rate = exchangeRates.getRate(accountFromPay.getCurrency(),
+                                                accountToPay.getCurrency());
 
+            // calculate the convert amount
             double convertAmount = rate * amount;
             // if there is enough money stored in account
             if (Double.compare(accountFromPay.getBalance(), amount) >= 0) {
+                // set the new balances
                 accountFromPay.setBalance(accountFromPay.getBalance() - amount);
                 accountToPay.setBalance(accountToPay.getBalance() + convertAmount);
 
@@ -69,13 +81,12 @@ public class SendMoneyCommand extends AbstractCommand {
 
                 accountToPay.getTransactions().add(receive);
             } else {
+                // add a transaction if there is insufficient funds
                 Transaction transaction = new InsufficientFundsTransaction(timestamp);
                 payer.getTransactions().add(transaction);
 
                 accountFromPay.getTransactions().add(transaction);
             }
-        } else {
-            // error
         }
     }
 }

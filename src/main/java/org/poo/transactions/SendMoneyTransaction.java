@@ -13,8 +13,9 @@ public class SendMoneyTransaction extends Transaction {
     private String amount;
     private String transferType;
 
-    public SendMoneyTransaction(int timestamp, String description, String receiverIban,
-                                String senderIban, String amount, String transferType) {
+    public SendMoneyTransaction(final int timestamp, final String description,
+                                final String receiverIban, final String senderIban,
+                                final String amount, final String transferType) {
         super(timestamp, description);
         this.receiverIban = receiverIban;
         this.senderIban = senderIban;

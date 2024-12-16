@@ -1,7 +1,7 @@
 package org.poo.accounts;
 
 public class ClassicAccount extends Account {
-    public ClassicAccount(String currency, String type) {
+    public ClassicAccount(final String currency, final String type) {
         super(currency, type);
     }
 }

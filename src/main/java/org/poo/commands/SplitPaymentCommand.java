@@ -19,7 +19,7 @@ public class SplitPaymentCommand extends AbstractCommand {
     private String currency;
     private int timestamp;
 
-    public SplitPaymentCommand(ArrayNode output, CommandInput input) {
+    public SplitPaymentCommand(final ArrayNode output, final CommandInput input) {
         super(output);
         this.accounts = input.getAccounts();
         this.amount = input.getAmount();
@@ -27,16 +27,25 @@ public class SplitPaymentCommand extends AbstractCommand {
         this.timestamp = input.getTimestamp();
     }
 
+    /**
+     * Executes the split payment operation across multiple accounts
+     * This method divides the specified payment amount equally among all provided accounts
+     * It checks each account's balance to verify if there is enough money available
+     * If any account fails due to insufficient funds an error transaction is generated
+     * Otherwise, the payment will be done for all accounts with a specific transaction
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
+        // get the exchange rates instance
         ExchangeRateManager exchangeRates = ExchangeRateManager.getInstance();
 
         int number = accounts.size();
         double amountDivided = amount / number;
 
-        boolean haveMoney = true;
-        String accountFail = null;
+        boolean haveMoney = true; // verify if the accounts have enough money
+        String accountFail = null; // account that has not enough money
         for (String account : accounts) {
             Account acc = bank.findAccountUserByIban(account);
 
@@ -50,7 +59,8 @@ public class SplitPaymentCommand extends AbstractCommand {
             }
         }
 
-        if (haveMoney == false) {
+        // if there is not enough money, generate the specific transaction
+        if (!haveMoney) {
             // locale used for double number . instead of ,
             String result = String.format(Locale.US, "Split payment of %.2f %s", amount, currency);
             Transaction transaction = new SplitPaymentsErrorTransaction(timestamp, result,
@@ -67,6 +77,7 @@ public class SplitPaymentCommand extends AbstractCommand {
             return;
         }
 
+        // otherwise, split the payment to all the accounts involved
         for (String account : accounts) {
             Account acc = bank.findAccountUserByIban(account);
 
@@ -78,8 +89,10 @@ public class SplitPaymentCommand extends AbstractCommand {
                 acc.setBalance(acc.getBalance() - convertAmount);
 
                 // locale used for double number . instead of ,
-                String result = String.format(Locale.US, "Split payment of %.2f %s", amount, currency);
-                Transaction transaction = new SplitPaymentsTransaction(timestamp, result, amountDivided, currency, accounts);
+                String result = String.format(Locale.US,
+                        "Split payment of %.2f %s", amount, currency);
+                Transaction transaction = new SplitPaymentsTransaction(timestamp,
+                                        result, amountDivided, currency, accounts);
 
                 User user = bank.findUserByIban(account);
                 user.getTransactions().add(transaction);

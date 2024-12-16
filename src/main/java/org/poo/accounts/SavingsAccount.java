@@ -9,7 +9,7 @@ public class SavingsAccount extends Account {
     @JsonIgnore
     private double interestRate;
 
-    public SavingsAccount(String currency, String type, double interestRate) {
+    public SavingsAccount(final String currency, final String type, final double interestRate) {
         super(currency, type);
         this.interestRate = interestRate;
     }

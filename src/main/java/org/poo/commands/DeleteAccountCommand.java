@@ -15,15 +15,20 @@ public class DeleteAccountCommand extends AbstractCommand {
     private int timestamp;
     private String email;
 
-    public DeleteAccountCommand(ArrayNode output, CommandInput input) {
+    public DeleteAccountCommand(final ArrayNode output, final CommandInput input) {
         super(output);
         this.account = input.getAccount();
         this.timestamp = input.getTimestamp();
         this.email = input.getEmail();
     }
 
+    /**
+     * Executes the command to delete a card from a user's account
+     * The card can only be deleted if the associated account has a balance of zero
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         User accountOwner = bank.getUsers().get(email);
@@ -35,6 +40,7 @@ public class DeleteAccountCommand extends AbstractCommand {
                 // we can delete this account
                 accountOwner.deleteAccount(account);
 
+                // add an output result to confirm the success of the command
                 ObjectMapper mapper = new ObjectMapper();
                 ObjectNode commandOutput = mapper.createObjectNode();
                 commandOutput.put("command", "deleteAccount");
@@ -47,6 +53,7 @@ public class DeleteAccountCommand extends AbstractCommand {
                 commandOutput.put("timestamp", timestamp);
                 output.add(commandOutput);
             } else {
+                // add an output for an error
                 ObjectMapper mapper = new ObjectMapper();
 
                 ObjectNode commandOutput = mapper.createObjectNode();
@@ -59,9 +66,9 @@ public class DeleteAccountCommand extends AbstractCommand {
 
                 commandOutput.put("timestamp", timestamp);
                 commandOutput.put("output", node);
-
                 output.add(commandOutput);
 
+                // add a transaction
                 Transaction transaction = new ExistFundsTransaction(timestamp);
                 accountOwner.getTransactions().add(transaction);
 

@@ -9,8 +9,10 @@ import java.util.List;
 public class SplitPaymentsErrorTransaction extends SplitPaymentsTransaction {
     private String error;
 
-    public SplitPaymentsErrorTransaction(int timestamp, String description, double amount,
-                                    String currency, List<String> involvedAccounts, String account) {
+    public SplitPaymentsErrorTransaction(final int timestamp, final String description,
+                                         final double amount, final String currency,
+                                         final List<String> involvedAccounts,
+                                         final String account) {
         super(timestamp, description, amount, currency, involvedAccounts);
         this.error = "Account " + account + " has insufficient funds for a split payment.";
     }

@@ -9,11 +9,16 @@ public abstract class Card {
     private String cardNumber;
     private String status;
 
-    public Card(String cardNumber, String status) {
+    public Card(final String cardNumber, final String status) {
         this.cardNumber = cardNumber;
         this.status = status;
     }
 
+    /**
+     * Returns the type of the card
+     *
+     * @return the card type as a {@code String}
+     */
     @JsonIgnore
     public abstract String getCardType();
 }

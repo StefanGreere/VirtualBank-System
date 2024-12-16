@@ -31,19 +31,28 @@ public abstract class Account {
     @JsonIgnore
     private List<Commerciant> commerciants = new ArrayList<>();
 
-    public Account(String currency, String type) {
+    public Account(final String currency, final String type) {
         this.currency = currency;
         this.type = type;
         this.iban = Utils.generateIBAN();
         this.balance = 0.0; // the balance starts from 0
     }
 
-    public void addCard(String cardType, String cardNumber) {
+    /**
+     * Adds a new card to the list of cards
+     *
+     * @param cardType the type of the card
+     * @param cardNumber the number of the card to be created
+     *
+     * If the card type is invalid, no card is added.
+     */
+    public void addCard(final String cardType, final String cardNumber) {
         // get the correct factory based on the type of the card
         CardFactory factory = CardFactorySelector.getFactory(cardType);
 
-        if (factory == null)
+        if (factory == null) {
             return;
+        }
 
         // create the card with the card number specified
         Card card = factory.createCard(cardNumber);
@@ -52,7 +61,13 @@ public abstract class Account {
         cards.add(card);
     }
 
-    public int findIndexCardByNumber(String cardNumber) {
+    /**
+     * Finds the index of a card in the list based on its card number
+     *
+     * @param cardNumber the card number to search for
+     * @return the index of the card if found or -1 if the card is not in the list
+     */
+    public int findIndexCardByNumber(final String cardNumber) {
         int index = 0;
         for (Card card : cards) {
             if (card.getCardNumber().equals(cardNumber)) {
@@ -62,15 +77,5 @@ public abstract class Account {
         }
 
         return -1;
-    }
-
-    public Commerciant findCommerciantByName(String name) {
-        for (Commerciant commerciant : commerciants) {
-            if (commerciant.getCommerciant().equals(name)) {
-                return commerciant;
-            }
-        }
-
-        return null;
     }
 }

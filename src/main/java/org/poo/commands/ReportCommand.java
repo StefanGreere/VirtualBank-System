@@ -15,7 +15,7 @@ public class ReportCommand extends AbstractCommand {
     private String account;
     private int timestamp;
 
-    public ReportCommand(ArrayNode output, CommandInput input) {
+    public ReportCommand(final ArrayNode output, final CommandInput input) {
         super(output);
         this.startTimestamp = input.getStartTimestamp();
         this.endTimestamp = input.getEndTimestamp();
@@ -23,14 +23,19 @@ public class ReportCommand extends AbstractCommand {
         this.timestamp = input.getTimestamp();
     }
 
+    /**
+     * Executes the command to generate a report for a specific account from an interval
+     */
     @Override
     public void execute() {
+        // get the instance of the bank with all the users
         BankSingleton bank = BankSingleton.getInstance();
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode commandOutput = mapper.createObjectNode();
         commandOutput.put("command", "report");
 
+        // get the user and if there is not an owner of the account, will ba an error
         User user = bank.findUserByIban(account);
         if (user == null) {
             ObjectNode node = mapper.createObjectNode();
@@ -43,6 +48,7 @@ public class ReportCommand extends AbstractCommand {
         }
         Account acc = user.findAccountByIban(account);
 
+        // create the output
         ObjectNode node = mapper.createObjectNode();
         node.put("IBAN", account);
         node.put("balance", acc.getBalance());
@@ -51,7 +57,8 @@ public class ReportCommand extends AbstractCommand {
         ArrayNode transactions = mapper.createArrayNode();
 
         for (Transaction transaction : acc.getTransactions()) {
-            if (transaction.getTimestamp() >= startTimestamp && transaction.getTimestamp() <= endTimestamp) {
+            if (transaction.getTimestamp() >= startTimestamp
+                    && transaction.getTimestamp() <= endTimestamp) {
                 ObjectNode report = mapper.valueToTree(transaction);
                 transactions.add(report);
             }
