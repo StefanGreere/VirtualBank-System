@@ -72,7 +72,11 @@ public final class ExchangeRateManager {
      * @return The exchange rate or null if no such rate exists
      */
     public Double getRate(final String from, final String to) {
-        return exchangeRates.getOrDefault(from, new HashMap<>()).get(to);
+        Map<String, Double> ratesFrom = exchangeRates.get(from);
+        if (ratesFrom != null) {
+            return ratesFrom.get(to);
+        }
+        return null;
     }
 
     /**
