@@ -21,13 +21,20 @@ public class User {
     @JsonIgnore
     private List<Transaction> transactions = new ArrayList<>();
 
-    public User(String firstName, String lastName, String email) {
+    public User(final String firstName, final String lastName, final String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
 
-    public void addAccount(String type, String currency, double interestRate) {
+    /**
+     * Adds a new account to the list of accounts
+     *
+     * @param type the type of the account
+     * @param currency the currency of the account
+     * @param interestRate the interest rate for the account (used only for savings accounts)
+     */
+    public void addAccount(final String type, final String currency, final double interestRate) {
         if (type.equals("classic")) {
             Account newAccount = new ClassicAccount(currency, type);
             accounts.add(newAccount);
@@ -37,7 +44,13 @@ public class User {
         }
     }
 
-    public Account findAccountByIban(String iban) {
+    /**
+     * Finds an account by IBAN
+     *
+     * @param iban the IBAN of the account to search for
+     * @return the account with the specified IBAN or null if no account has found
+     */
+    public Account findAccountByIban(final String iban) {
         for (Account account : accounts) {
             if (account.getIban().equals(iban)) {
                 return account;
@@ -46,7 +59,13 @@ public class User {
         return null;
     }
 
-    public Account findAccountByCardNumber(String cardNumber) {
+    /**
+     * Finds an account with a given card number
+     *
+     * @param cardNumber the card number to search for
+     * @return the account that contains the card or null if no account has found
+     */
+    public Account findAccountByCardNumber(final String cardNumber) {
         for (Account account : accounts) {
             int index = account.findIndexCardByNumber(cardNumber);
 
@@ -59,7 +78,12 @@ public class User {
         return null;
     }
 
-    public void deleteAccount(String iban) {
+    /**
+     * Deletes an account with the specified IBAN
+     *
+     * @param iban the IBAN of the account to be deleted
+     */
+    public void deleteAccount(final String iban) {
         for (int index = 0; index < accounts.size(); index++) {
             if (accounts.get(index).getIban().equals(iban)) {
                 accounts.remove(index);
@@ -68,7 +92,13 @@ public class User {
         }
     }
 
-    public Card findCard(String cardNumber) {
+    /**
+     * Finds a card with the specified card number
+     *
+     * @param cardNumber the number of the card to search for
+     * @return the card if found or null if no card has found
+     */
+    public Card findCard(final String cardNumber) {
         for (Account account : accounts) {
             int index = account.findIndexCardByNumber(cardNumber);
 
